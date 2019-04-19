@@ -31,11 +31,10 @@ printf("\nayla agent start\n\n");
 
 	/* wlan intialization */
 #if defined(CONFIG_WIFI_NORMAL) && defined(CONFIG_NETWORK)
-	  wlan_network();
+	      wlan_network();
           Led_Indicate();
           KEY_Indicate();
-          REGION_Indicate();//默认region设置
-          //printf_flag_all();
+          REGION_Indicate();//默认region设置       
 #endif
 
 	/* Execute application example */

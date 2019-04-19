@@ -26,7 +26,7 @@
     </Jet>
     <PlDriver>
         <FirstRun>0</FirstRun>
-        <MemConfigValue>C:\Users\wyc\Desktop\开发项目集\（2）3IN全球域1\3-21最新备份\Smart_Plug_RTK\Smart_Plug_RTK\project\realtek_amebaz_va0_example\EWARM-RELEASE\..\..\..\component\soc\realtek\8711b\misc\iar_utility\common\8710b.ddf</MemConfigValue>
+        <MemConfigValue>C:\Users\wyc\Desktop\开发项目集\（2）3IN全球域1\3IN1\Realtek3IN1\project\realtek_amebaz_va0_example\EWARM-RELEASE\..\..\..\component\soc\realtek\8711b\misc\iar_utility\common\8710b.ddf</MemConfigValue>
     </PlDriver>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>

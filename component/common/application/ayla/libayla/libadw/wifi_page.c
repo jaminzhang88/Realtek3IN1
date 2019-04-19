@@ -932,38 +932,69 @@ static void adw_wifi_json_stat_get(struct server_req *req)
 	adw_unlock();
 }
 extern int flag_region_which;
-static void adw_run_region_get(struct server_req *req)
+#define REGION_SA         "sa"
+#define REGION_US         "us"
+#define REGION_EU         "eu"
+
+//APP端向设备端获取当前运行域
+void adw_run_region_get(struct server_req *req)
 {
-	char data[10];
-	int ret;
+       int index;
+       char buf[512]={0};
+       char buf1[40]={0};
+       char buf2[40]={0};
+       char buf3[40]={0};
+       char tmp_sa[128]={0};
+       char tmp_us[128]={0};
+       char tmp_eu[128]={0};
+       OEM_GET(REGION_SA,buf1);
+       OEMMODEL_GET(REGION_SA,buf1+20);
+       OEM_GET(REGION_US,buf2);
+       OEMMODEL_GET(REGION_US,buf2+20);
+       OEM_GET(REGION_EU,buf3);
+       OEMMODEL_GET(REGION_EU,buf3+20);
+       //SA
+       sprintf(tmp_sa,"{\"index\":%d,\"region\":\"%s\",\"oem\":\"%s\",\"model\":\"%s\"},",
+					1,"sa",buf1,buf1+20);
+       //US
+       sprintf(tmp_us,"{\"index\":%d,\"region\":\"%s\",\"oem\":\"%s\",\"model\":\"%s\"},",
+					2,"us",buf2,buf2+20);
+       //EU
+	   sprintf(tmp_eu,"{\"index\":%d,\"region\":\"%s\",\"oem\":\"%s\",\"model\":\"%s\"}",
+					2,"eu",buf3,buf3+20);
+					
+    if(flag_region_which==1){
+       index=1;
+       memset(buf,0,sizeof(buf));
+       sprintf(buf,"{\"error\":0,\"run_region\":%d,\"options\":[",index);
+       strcat(buf,tmp_sa);
+	   strcat(buf,tmp_us);
+	   strcat(buf,tmp_eu);
+    }else if(flag_region_which==2){
+       index=2;
+       memset(buf,0,sizeof(buf));
+       sprintf(buf,"{\"error\":0,\"run_region\":%d,\"options\":[",index);
+       strcat(buf,tmp_sa);
+	   strcat(buf,tmp_us);
+	   strcat(buf,tmp_eu);
+    }else if(flag_region_which==3){
+       index=3;
+       memset(buf,0,sizeof(buf));
+       sprintf(buf,"{\"error\":0,\"run_region\":%d,\"options\":[",index);
+       strcat(buf,tmp_sa);
+	   strcat(buf,tmp_us);
+	   strcat(buf,tmp_eu);
+    }
 
-	memset(data,0,sizeof(data));
-	//ret = al_persist_data_read(AL_PERSIST_FACTORY,"run_region",data,sizeof(data));
-	//printf("page run_region[%d] = %s",ret,data);
-
-	switch(flag_region_which){
-              case 1:data[0]='c';data[1]='n';break;
-              case 2:data[0]='u';data[1]='s';break;
-              case 3:data[0]='e';data[1]='u';break;
-              default:break;
-        }
-	server_json_header(req);
+    server_json_header(req);
 	adw_lock();
-	if(ret>0)
-	{
-		server_put(req,
-			"{\"run_region\":\"%s\",\"region\":[\"sa\",\"us\",\"eu\"]}",
-			data);
-	}
-	else
-	{
-		server_put(req, "{\"run_region\":\"\"}");
-	}
+    strcat(buf,"]}");
+    server_put(req, "%s",buf);
 	adw_unlock();
 }
 
 //APP端向设备端设置
-static void adw_run_region_post(struct server_req *req)
+void adw_run_region_post(struct server_req *req)
 {
 	char *arg;
 	char data[64];
@@ -973,12 +1004,10 @@ static void adw_run_region_post(struct server_req *req)
 	memset(&data, 0, sizeof(data));
 	arg = server_get_arg_by_name(req, "region",
 	    	data, sizeof(data));
-	if (arg) {
+	/*if (arg) {
 		len = strlen(arg);
 		if (len > 0)
 		{
-			//ret = al_persist_data_write(AL_PERSIST_FACTORY,"run_region",arg,len );
-			//printcli("page fw = %d,[%d]%s",ret,len,arg);
 			if(*arg='s'){
                             char *argv1[] = { "client","server","region" ,"sa"};
                             demo_client_cmd(4,argv1);
@@ -994,6 +1023,18 @@ static void adw_run_region_post(struct server_req *req)
 			}
 		}
 	}
+    */
+    int index;
+    if(arg){
+       ret = -1;
+       index = atoi(arg);
+       if(index==1){
+
+       }
+
+    }
+
+
 
 	server_json_header(req);
 	server_put(req, "{\"error\":%d}",ret);
@@ -1668,20 +1709,16 @@ static const struct url_list adw_wifi_url_list[] = {
 	URL_DELETE("/wifi_profile.json", adw_wifi_json_prof_delete,
 	    APP_ADS_REQS),
 	{ 0 },
-
-       //3in1 add by KingKa
-       URL_GET("/run_region.json", adw_run_region_get,
-	    REQ_SOFT_AP),
-       URL_POST("/run_region.json", adw_run_region_post,
-	    REQ_SOFT_AP),
 };
 
+extern const struct url_list user_wifi_url_list[];
 void adw_wifi_page_init(int enable_redirect)
 {
 	if (enable_redirect) {
 		server_redir_handler_get = adw_wifi_redir_handler_get;
 	}
 	server_add_urls(adw_wifi_url_list);
+	server_add_urls(user_wifi_url_list);
 	net_callback_init(&adw_wifi_page_scan_callback,
 	    adw_wifi_page_scan_get_cb, &adw_state);
 }

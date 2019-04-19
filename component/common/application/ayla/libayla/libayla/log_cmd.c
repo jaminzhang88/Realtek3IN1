@@ -32,7 +32,6 @@ static void log_show(const char *name, u32 log_mask)
  * on_mask and off_mask supplied, while respecting the global minimum mask.
  * Returns the new mask for the module.
  */
-extern int flag_log_info;
 static enum log_mask log_mask_change_index(unsigned int mod_nr,
 		 enum log_mask on_mask, enum log_mask off_mask)
 {

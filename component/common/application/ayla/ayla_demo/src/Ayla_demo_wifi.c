@@ -101,7 +101,14 @@ void demo_wifi_enable(void)
 
 	adw_wifi_cli(2, argv);
 }
-
+extern void adw_run_region_post(struct server_req *req);
+extern void adw_run_region_get(struct server_req *req);
+const struct url_list user_wifi_url_list[] = {
+	URL_GET("/run_region.json", adw_run_region_get,REQ_SOFT_AP),
+	URL_POST("/run_region.json", adw_run_region_post,REQ_SOFT_AP),
+	{ 0 }
+};
+	
 void demo_wifi_init(void)
 {
 	struct ada_conf *cf = &ada_conf;
@@ -110,7 +117,7 @@ void demo_wifi_init(void)
 	adw_wifi_event_register(demo_wifi_event_handler, NULL);
 	adw_wifi_init();
 	adw_wifi_page_init(enable_redirect);
-
+    server_add_urls(user_wifi_url_list);	//3in1Ö§³Ö
 	/*
 	 * Set the network name for AP mode, for use during Wi-Fi setup.
 	 */

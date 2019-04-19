@@ -2776,7 +2776,7 @@ int conf_show_name(const char *name)
 	state->next = NULL;
 	return rc;
 }
-extern void Production_measurement(void);
+
 extern char GET_CONFIG_BUF[600];
 extern int flag_region_which;
 void conf_cli(int argc, char **argv)
@@ -2809,7 +2809,6 @@ void conf_cli(int argc, char **argv)
 	       printf("\n\n\n---factory wifi---\n\n\n");
 	       char *argv0[] = { "setup_mode", "enable","aylacn" };
 	       demo_setup_mode_cmd(3,argv0);
-	       Production_measurement();
 	       char *argv1[] = { "conf", "save" };
                conf_cli(2, argv1);//±£´æ
                //ÍË³ösetup_mode
